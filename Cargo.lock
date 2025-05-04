@@ -41,10 +41,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "genai-types"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8ad3eb8b700bf46c510b8f5c51e5b8d8ca1e1c8d7f34bfb0613daa6d7adc2fd1"
+dependencies = [
+ "mcp-protocol",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "google-proxy"
 version = "0.1.0"
 dependencies = [
  "base64",
+ "genai-types",
  "serde",
  "serde_json",
  "toml",
@@ -218,6 +230,16 @@ name = "litemap"
 version = "0.7.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "23fb14cb19457329c82206317a5663005a4d404783dc74f4252769b0d5f42856"
+
+[[package]]
+name = "mcp-protocol"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ccf8b1c9deb6761095dad04f4d839c9a1877f6a4655877edaca6637641231a44"
+dependencies = [
+ "serde",
+ "serde_json",
+]
 
 [[package]]
 name = "memchr"

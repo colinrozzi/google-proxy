@@ -1,7 +1,7 @@
 use crate::api::GeminiClient;
 use crate::bindings::ntwk::theater::runtime::log;
-use crate::types::gemini::{GeminiRequest, GeminiResponse};
 use crate::types::state::State;
+use genai_types::{ProxyRequest, ProxyResponse};
 
 pub fn handle_request(
     data: Vec<u8>,
@@ -25,13 +25,13 @@ pub fn handle_request(
     ));
 
     // Parse the request
-    let request: GeminiRequest = match serde_json::from_slice(&data) {
+    let request: ProxyRequest = match serde_json::from_slice(&data) {
         Ok(req) => req,
         Err(e) => {
             log(&format!("Error parsing request: {}", e));
 
             // Try to respond with a properly formatted error
-            let error_response = GeminiResponse::Error {
+            let error_response = ProxyResponse::Error {
                 error: format!("Invalid request format: {}", e),
             };
 
@@ -47,31 +47,47 @@ pub fn handle_request(
 
     // Process based on operation type
     let response = match request {
-        GeminiRequest::GenerateContent { request, model, stream } => {
-            log(&format!(
-                "Generating content with model: {}",
-                model
-            ));
+        ProxyRequest::GenerateCompletion { request } => match request.try_into() {
+            Ok(req) => match client.generate_content(req) {
+                Ok(content) => {
+                    log("Content generated successfully");
+                    // Convert the content to the expected format
+                    match content.try_into() {
+                        Ok(content) => ProxyResponse::Completion {
+                            completion: content,
+                        },
+                        Err(e) => {
+                            log(&format!("Error converting content: {:?}", e));
+                            return Err(format!("Failed to convert content: {:?}", e));
+                        }
+                    }
+                }
 
-            match client.generate_content(request, &model, stream) {
-                Ok(content) => GeminiResponse::Content { content },
                 Err(e) => {
                     log(&format!("Error generating content: {:?}", e));
-                    GeminiResponse::Error {
+                    ProxyResponse::Error {
                         error: format!("Failed to generate content: {:?}", e),
                     }
                 }
+            },
+            Err(e) => {
+                log(&format!("Error converting request: {:?}", e));
+                ProxyResponse::Error {
+                    error: format!("Failed to convert request: {:?}", e),
+                }
             }
-        }
+        },
 
-        GeminiRequest::ListModels => {
+        ProxyRequest::ListModels => {
             log("Listing available models");
 
             match client.list_models() {
-                Ok(models) => GeminiResponse::ListModels { models },
+                Ok(models) => ProxyResponse::ListModels {
+                    models: models.into_iter().map(|m| m.into()).collect(),
+                },
                 Err(e) => {
                     log(&format!("Error listing models: {:?}", e));
-                    GeminiResponse::Error {
+                    ProxyResponse::Error {
                         error: format!("Failed to list models: {:?}", e),
                     }
                 }
