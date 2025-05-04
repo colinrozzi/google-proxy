@@ -1,0 +1,10 @@
+package ntwk:theater;
+
+world google-proxy {
+    import runtime;
+    import http-client;
+    import store;
+
+    export message-server-client;
+    export actor;
+}
