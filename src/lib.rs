@@ -1,7 +1,10 @@
 mod api;
 mod bindings;
 mod handlers;
-mod types;
+pub mod types;
+
+#[cfg(test)]
+mod tests;
 
 use crate::bindings::exports::ntwk::theater::actor::Guest;
 use crate::bindings::exports::ntwk::theater::message_server_client::Guest as MessageServerClient;
