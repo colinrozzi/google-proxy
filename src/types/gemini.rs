@@ -207,9 +207,9 @@ impl TryFrom<MessageContent> for Part {
                     args: input,
                 }),
             }),
-            /// This is hacky and I would be surprised if it worked. I need to update the tool use
-            /// to retain the name and I am not sure about the way we are serializing the
-            /// ToolContent to json, but this is what I am going with for now.
+            // This is hacky and I would be surprised if it worked. I need to update the tool use
+            // to retain the name and I am not sure about the way we are serializing the
+            // ToolContent to json, but this is what I am going with for now.
             MessageContent::ToolResult {
                 tool_use_id,
                 content,
