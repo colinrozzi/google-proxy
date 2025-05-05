@@ -57,6 +57,7 @@ version = "0.1.0"
 dependencies = [
  "base64",
  "genai-types",
+ "mcp-protocol",
  "serde",
  "serde_json",
  "toml",

@@ -4,8 +4,7 @@ use crate::types::gemini::{
     GeminiError, GenerateContentRequest, GenerateContentResponse, ModelInfo,
 };
 
-use serde_json::{json, Value};
-use url::Url;
+use serde_json::json;
 
 /// Client for interacting with the Google Gemini API
 pub struct GeminiClient {
@@ -88,6 +87,27 @@ impl GeminiClient {
         let endpoint = "generateContent";
 
         log(&format!("Generating content with model: {}", request.model));
+        
+        // Log tool usage
+        if let Some(tools) = &request.tools {
+            for tool in tools {
+                if let Some(func_decls) = &tool.function_declarations {
+                    log(&format!("Request includes {} tools", func_decls.len()));
+                    for decl in func_decls {
+                        log(&format!("Tool available: {}", decl.name));
+                    }
+                }
+            }
+        }
+        
+        if let Some(tool_config) = &request.tool_config {
+            if let Some(func_config) = &tool_config.function_calling_config {
+                log(&format!("Function calling mode: {:?}", func_config.mode));
+                if let Some(allowed) = &func_config.allowed_function_names {
+                    log(&format!("Allowed functions: {:?}", allowed));
+                }
+            }
+        }
 
         // Create the full URL with the API key
         let url = format!(
