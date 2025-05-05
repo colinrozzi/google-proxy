@@ -227,6 +227,7 @@ impl TryFrom<CompletionRequest> for GenerateContentRequest {
 
 /// Usage metrics
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct UsageMetadata {
     pub prompt_token_count: u32,
     pub candidates_token_count: u32,
@@ -246,6 +247,7 @@ impl TryFrom<UsageMetadata> for Usage {
 
 /// Candidate response from Gemini API
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Candidate {
     pub content: Content,
     pub finish_reason: FinishReason,
@@ -317,6 +319,7 @@ pub struct SafetyRating {
 
 /// Response from Gemini API
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct GenerateContentResponse {
     pub candidates: Vec<Candidate>,
     pub prompt_feedback: Option<PromptFeedback>,
