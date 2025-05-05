@@ -1,5 +1,5 @@
 name = "google-proxy"
-component_path = "/nix/store/wikdavy8k0h1n95cdi2pdr7c26vn6y89-google-proxy-0.1.0/lib/google-proxy.wasm"
+component_path = "/nix/store/k69r1vdg80g7i151aqan0qky3gp8fgw7-google-proxy-0.1.0/lib/google-proxy.wasm"
 short_description = "A proxy actor for interacting with the Google Gemini API"
 init_state = "/Users/colinrozzi/work/actor-registry/google-proxy/init.json"
 
