@@ -1,6 +1,6 @@
 name = "google-proxy"
 version = "0.1.0"
-component_path = "/Users/colinrozzi/work/actor-registry/google-proxy/./target/wasm32-unknown-unknown/release/google_proxy.wasm"
+component = "./target/wasm32-unknown-unknown/release/google_proxy.wasm"
 init_state = "/Users/colinrozzi/work/actor-registry/google-proxy/init.json"
 
 [[handlers]]
