@@ -11,12 +11,12 @@ use crate::bindings::exports::ntwk::theater::message_server_client::Guest as Mes
 use crate::bindings::ntwk::theater::runtime::log;
 use crate::types::state::{Config, State};
 
+use bindings::ntwk::theater::environment;
 use bindings::ntwk::theater::types::ChannelAccept;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 struct InitData {
-    google_api_key: String,
     store_id: Option<String>,
     config: Option<Config>,
 }
@@ -44,13 +44,18 @@ impl Guest for Component {
 
         log("Init data parsed successfully");
 
+        let google_api_key = match environment::get_var("GOOGLE_GEMINI_API_KEY") {
+            Some(key) => {
+                log("Google API key found in environment");
+                key
+            }
+            None => {
+                return Err("Google API key not found in environment".to_string());
+            }
+        };
+
         // Initialize state
-        let state = State::new(
-            id,
-            init_data.google_api_key,
-            init_data.store_id,
-            init_data.config,
-        );
+        let state = State::new(id, google_api_key, init_data.store_id, init_data.config);
 
         log("State initialized");
 

@@ -4,6 +4,7 @@ world google-proxy {
     import runtime;
     import http-client;
     import store;
+    import environment;
 
     export message-server-client;
     export actor;

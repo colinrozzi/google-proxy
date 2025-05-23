@@ -2530,6 +2530,157 @@ pub mod ntwk {
                 }
             }
         }
+        #[allow(dead_code, async_fn_in_trait, unused_imports, clippy::all)]
+        pub mod environment {
+            #[used]
+            #[doc(hidden)]
+            static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
+            use super::super::super::_rt;
+            #[allow(unused_unsafe, clippy::all)]
+            /// Get a specific environment variable
+            /// Returns None if the variable doesn't exist or access is denied
+            pub fn get_var(name: &str) -> Option<_rt::String> {
+                unsafe {
+                    #[cfg_attr(target_pointer_width = "64", repr(align(8)))]
+                    #[cfg_attr(target_pointer_width = "32", repr(align(4)))]
+                    struct RetArea(
+                        [::core::mem::MaybeUninit<
+                            u8,
+                        >; 3 * ::core::mem::size_of::<*const u8>()],
+                    );
+                    let mut ret_area = RetArea(
+                        [::core::mem::MaybeUninit::uninit(); 3
+                            * ::core::mem::size_of::<*const u8>()],
+                    );
+                    let vec0 = name;
+                    let ptr0 = vec0.as_ptr().cast::<u8>();
+                    let len0 = vec0.len();
+                    let ptr1 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "ntwk:theater/environment")]
+                    unsafe extern "C" {
+                        #[link_name = "get-var"]
+                        fn wit_import2(_: *mut u8, _: usize, _: *mut u8);
+                    }
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unsafe extern "C" fn wit_import2(_: *mut u8, _: usize, _: *mut u8) {
+                        unreachable!()
+                    }
+                    unsafe { wit_import2(ptr0.cast_mut(), len0, ptr1) };
+                    let l3 = i32::from(*ptr1.add(0).cast::<u8>());
+                    let result7 = match l3 {
+                        0 => None,
+                        1 => {
+                            let e = {
+                                let l4 = *ptr1
+                                    .add(::core::mem::size_of::<*const u8>())
+                                    .cast::<*mut u8>();
+                                let l5 = *ptr1
+                                    .add(2 * ::core::mem::size_of::<*const u8>())
+                                    .cast::<usize>();
+                                let len6 = l5;
+                                let bytes6 = _rt::Vec::from_raw_parts(
+                                    l4.cast(),
+                                    len6,
+                                    len6,
+                                );
+                                _rt::string_lift(bytes6)
+                            };
+                            Some(e)
+                        }
+                        _ => _rt::invalid_enum_discriminant(),
+                    };
+                    result7
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            /// List all accessible environment variables
+            /// Returns empty list if list_all is not enabled in config
+            pub fn list_vars() -> _rt::Vec<(_rt::String, _rt::String)> {
+                unsafe {
+                    #[cfg_attr(target_pointer_width = "64", repr(align(8)))]
+                    #[cfg_attr(target_pointer_width = "32", repr(align(4)))]
+                    struct RetArea(
+                        [::core::mem::MaybeUninit<
+                            u8,
+                        >; 2 * ::core::mem::size_of::<*const u8>()],
+                    );
+                    let mut ret_area = RetArea(
+                        [::core::mem::MaybeUninit::uninit(); 2
+                            * ::core::mem::size_of::<*const u8>()],
+                    );
+                    let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "ntwk:theater/environment")]
+                    unsafe extern "C" {
+                        #[link_name = "list-vars"]
+                        fn wit_import1(_: *mut u8);
+                    }
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unsafe extern "C" fn wit_import1(_: *mut u8) {
+                        unreachable!()
+                    }
+                    unsafe { wit_import1(ptr0) };
+                    let l2 = *ptr0.add(0).cast::<*mut u8>();
+                    let l3 = *ptr0
+                        .add(::core::mem::size_of::<*const u8>())
+                        .cast::<usize>();
+                    let base10 = l2;
+                    let len10 = l3;
+                    let mut result10 = _rt::Vec::with_capacity(len10);
+                    for i in 0..len10 {
+                        let base = base10
+                            .add(i * (4 * ::core::mem::size_of::<*const u8>()));
+                        let e10 = {
+                            let l4 = *base.add(0).cast::<*mut u8>();
+                            let l5 = *base
+                                .add(::core::mem::size_of::<*const u8>())
+                                .cast::<usize>();
+                            let len6 = l5;
+                            let bytes6 = _rt::Vec::from_raw_parts(l4.cast(), len6, len6);
+                            let l7 = *base
+                                .add(2 * ::core::mem::size_of::<*const u8>())
+                                .cast::<*mut u8>();
+                            let l8 = *base
+                                .add(3 * ::core::mem::size_of::<*const u8>())
+                                .cast::<usize>();
+                            let len9 = l8;
+                            let bytes9 = _rt::Vec::from_raw_parts(l7.cast(), len9, len9);
+                            (_rt::string_lift(bytes6), _rt::string_lift(bytes9))
+                        };
+                        result10.push(e10);
+                    }
+                    _rt::cabi_dealloc(
+                        base10,
+                        len10 * (4 * ::core::mem::size_of::<*const u8>()),
+                        ::core::mem::size_of::<*const u8>(),
+                    );
+                    let result11 = result10;
+                    result11
+                }
+            }
+            #[allow(unused_unsafe, clippy::all)]
+            /// Check if a specific environment variable exists (and is accessible)
+            pub fn exists(name: &str) -> bool {
+                unsafe {
+                    let vec0 = name;
+                    let ptr0 = vec0.as_ptr().cast::<u8>();
+                    let len0 = vec0.len();
+                    #[cfg(target_arch = "wasm32")]
+                    #[link(wasm_import_module = "ntwk:theater/environment")]
+                    unsafe extern "C" {
+                        #[link_name = "exists"]
+                        fn wit_import1(_: *mut u8, _: usize) -> i32;
+                    }
+                    #[cfg(not(target_arch = "wasm32"))]
+                    unsafe extern "C" fn wit_import1(_: *mut u8, _: usize) -> i32 {
+                        unreachable!()
+                    }
+                    let ret = unsafe { wit_import1(ptr0.cast_mut(), len0) };
+                    _rt::bool_lift(ret as u8)
+                }
+            }
+        }
     }
 }
 #[rustfmt::skip]
@@ -3826,9 +3977,9 @@ pub(crate) use __export_google_proxy_impl as export;
 )]
 #[doc(hidden)]
 #[allow(clippy::octal_escapes)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 2419] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xf0\x11\x01A\x02\x01\
-A\x15\x01B\x16\x01s\x04\0\x08actor-id\x03\0\0\x01s\x04\0\x0achannel-id\x03\0\x02\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 2526] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xdb\x12\x01A\x02\x01\
+A\x17\x01B\x16\x01s\x04\0\x08actor-id\x03\0\0\x01s\x04\0\x0achannel-id\x03\0\x02\
 \x01p}\x01k\x04\x01r\x02\x08accepted\x7f\x07message\x05\x04\0\x0echannel-accept\x03\
 \0\x06\x01kw\x01r\x03\x0aevent-types\x06parent\x08\x04data\x04\x04\0\x05event\x03\
 \0\x09\x01r\x02\x04hashw\x05event\x0a\x04\0\x0ameta-event\x03\0\x0b\x01p\x0c\x01\
@@ -3867,22 +4018,25 @@ store-at-label\x01\x11\x04\0\x18replace-content-at-label\x01\x11\x04\0\x10replac
 e-at-label\x01\x0c\x01ps\x01j\x01\x12\x01s\x01@\x01\x08store-ids\0\x13\x04\0\x0b\
 list-labels\x01\x14\x01p\x01\x01j\x01\x15\x01s\x01@\x01\x08store-ids\0\x16\x04\0\
 \x10list-all-content\x01\x17\x01j\x01w\x01s\x01@\x01\x08store-ids\0\x18\x04\0\x14\
-calculate-total-size\x01\x19\x03\0\x12ntwk:theater/store\x05\x08\x02\x03\0\0\x05\
-event\x02\x03\0\0\x0achannel-id\x02\x03\0\0\x0echannel-accept\x01B\x1d\x02\x03\x02\
-\x01\x09\x04\0\x05event\x03\0\0\x02\x03\x02\x01\x0a\x04\0\x0achannel-id\x03\0\x02\
-\x02\x03\x02\x01\x0b\x04\0\x0echannel-accept\x03\0\x04\x01p}\x01k\x06\x01o\x01\x06\
-\x01o\x01\x07\x01j\x01\x09\x01s\x01@\x02\x05state\x07\x06params\x08\0\x0a\x04\0\x0b\
-handle-send\x01\x0b\x01o\x02s\x06\x01o\x02\x07\x09\x01j\x01\x0d\x01s\x01@\x02\x05\
-state\x07\x06params\x0c\0\x0e\x04\0\x0ehandle-request\x01\x0f\x01o\x01\x05\x01o\x02\
-\x07\x10\x01j\x01\x11\x01s\x01@\x02\x05state\x07\x06params\x0c\0\x12\x04\0\x13ha\
-ndle-channel-open\x01\x13\x01o\x02\x03\x06\x01@\x02\x05state\x07\x06params\x14\0\
-\x0a\x04\0\x16handle-channel-message\x01\x15\x01o\x01\x03\x01@\x02\x05state\x07\x06\
-params\x16\0\x0a\x04\0\x14handle-channel-close\x01\x17\x04\0\"ntwk:theater/messa\
-ge-server-client\x05\x0c\x01B\x07\x01p}\x01k\0\x01o\x01s\x01o\x01\x01\x01j\x01\x03\
-\x01s\x01@\x02\x05state\x01\x06params\x02\0\x04\x04\0\x04init\x01\x05\x04\0\x12n\
-twk:theater/actor\x05\x0d\x04\0\x19ntwk:theater/google-proxy\x04\0\x0b\x12\x01\0\
-\x0cgoogle-proxy\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-componen\
-t\x070.227.1\x10wit-bindgen-rust\x060.41.0";
+calculate-total-size\x01\x19\x03\0\x12ntwk:theater/store\x05\x08\x01B\x09\x01ks\x01\
+@\x01\x04names\0\0\x04\0\x07get-var\x01\x01\x01o\x02ss\x01p\x02\x01@\0\0\x03\x04\
+\0\x09list-vars\x01\x04\x01@\x01\x04names\0\x7f\x04\0\x06exists\x01\x05\x03\0\x18\
+ntwk:theater/environment\x05\x09\x02\x03\0\0\x05event\x02\x03\0\0\x0achannel-id\x02\
+\x03\0\0\x0echannel-accept\x01B\x1d\x02\x03\x02\x01\x0a\x04\0\x05event\x03\0\0\x02\
+\x03\x02\x01\x0b\x04\0\x0achannel-id\x03\0\x02\x02\x03\x02\x01\x0c\x04\0\x0echan\
+nel-accept\x03\0\x04\x01p}\x01k\x06\x01o\x01\x06\x01o\x01\x07\x01j\x01\x09\x01s\x01\
+@\x02\x05state\x07\x06params\x08\0\x0a\x04\0\x0bhandle-send\x01\x0b\x01o\x02s\x06\
+\x01o\x02\x07\x09\x01j\x01\x0d\x01s\x01@\x02\x05state\x07\x06params\x0c\0\x0e\x04\
+\0\x0ehandle-request\x01\x0f\x01o\x01\x05\x01o\x02\x07\x10\x01j\x01\x11\x01s\x01\
+@\x02\x05state\x07\x06params\x0c\0\x12\x04\0\x13handle-channel-open\x01\x13\x01o\
+\x02\x03\x06\x01@\x02\x05state\x07\x06params\x14\0\x0a\x04\0\x16handle-channel-m\
+essage\x01\x15\x01o\x01\x03\x01@\x02\x05state\x07\x06params\x16\0\x0a\x04\0\x14h\
+andle-channel-close\x01\x17\x04\0\"ntwk:theater/message-server-client\x05\x0d\x01\
+B\x07\x01p}\x01k\0\x01o\x01s\x01o\x01\x01\x01j\x01\x03\x01s\x01@\x02\x05state\x01\
+\x06params\x02\0\x04\x04\0\x04init\x01\x05\x04\0\x12ntwk:theater/actor\x05\x0e\x04\
+\0\x19ntwk:theater/google-proxy\x04\0\x0b\x12\x01\0\x0cgoogle-proxy\x03\0\0\0G\x09\
+producers\x01\x0cprocessed-by\x02\x0dwit-component\x070.227.1\x10wit-bindgen-rus\
+t\x060.41.0";
 #[inline(never)]
 #[doc(hidden)]
 pub fn __link_custom_section_describing_imports() {

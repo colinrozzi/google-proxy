@@ -1,6 +1,6 @@
 name = "google-proxy"
 version = "0.1.0"
-component = "./target/wasm32-unknown-unknown/release/google_proxy.wasm"
+component = "/Users/colinrozzi/work/actor-registry/google-proxy/./target/wasm32-unknown-unknown/release/google_proxy.wasm"
 init_state = "/Users/colinrozzi/work/actor-registry/google-proxy/init.json"
 
 [[handlers]]
@@ -22,3 +22,10 @@ type = "store"
 type = "http-client"
 
 [handlers.config]
+
+[[handlers]]
+type = "environment"
+
+[handlers.config]
+allowed_vars = ["GOOGLE_GEMINI_API_KEY"]
+allow_list_all = false
