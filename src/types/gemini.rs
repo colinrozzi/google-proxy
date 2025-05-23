@@ -618,7 +618,7 @@ pub struct SafetyRating {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GenerateContentResponse {
-    pub candidates: Vec<Candidate>,
+    pub candidates: Option<Vec<Candidate>>,
     pub prompt_feedback: Option<PromptFeedback>,
     pub usage_metadata: Option<UsageMetadata>,
     pub model_version: String,
@@ -628,56 +628,66 @@ impl TryFrom<GenerateContentResponse> for CompletionResponse {
     type Error = GeminiError;
 
     fn try_from(response: GenerateContentResponse) -> Result<Self, Self::Error> {
-        // We are only interested in the first candidate for now
-        if response.candidates.is_empty() {
-            return Err(GeminiError::InvalidResponse(
-                "No candidates in response".to_string(),
-            ));
+        match response.candidates {
+            Some(candidates) => {
+                // We are only interested in the first candidate for now
+                if candidates.is_empty() {
+                    return Err(GeminiError::InvalidResponse(
+                        "No candidates in response".to_string(),
+                    ));
+                }
+
+                let candidate = candidates[0].clone();
+
+                // Convert all parts in the candidate to MessageContent
+                let content_parts = candidate
+                    .content
+                    .parts
+                    .iter()
+                    .map(|part| (*part).clone().try_into())
+                    .collect::<Result<Vec<MessageContent>, GeminiError>>()?;
+
+                let usage = match response.usage_metadata {
+                    Some(usage) => Usage {
+                        input_tokens: usage.prompt_token_count,
+                        output_tokens: usage.candidates_token_count,
+                    },
+                    None => Usage {
+                        input_tokens: 0,
+                        output_tokens: 0,
+                    },
+                };
+
+                // Check if the response contains a function call
+                let has_function_call = content_parts
+                    .iter()
+                    .any(|part| matches!(part, MessageContent::ToolUse { .. }));
+
+                // Set stop reason to ToolUse if function call is present
+                let stop_reason = if has_function_call {
+                    StopReason::ToolUse
+                } else {
+                    candidate.finish_reason.into()
+                };
+
+                Ok(CompletionResponse {
+                    content: content_parts,
+                    id: candidate.index.to_string(),
+                    model: response.model_version,
+                    role: candidate.content.role.into(),
+                    stop_reason,
+                    stop_sequence: None,
+                    message_type: "gemini".to_string(),
+                    usage,
+                })
+            }
+            None => {
+                return Err(GeminiError::InvalidResponse(format!(
+                    "No candidates in response. Response: {:?}",
+                    response
+                )));
+            }
         }
-
-        let candidate = response.candidates[0].clone();
-
-        // Convert all parts in the candidate to MessageContent
-        let content_parts = candidate
-            .content
-            .parts
-            .iter()
-            .map(|part| (*part).clone().try_into())
-            .collect::<Result<Vec<MessageContent>, GeminiError>>()?;
-
-        let usage = match response.usage_metadata {
-            Some(usage) => Usage {
-                input_tokens: usage.prompt_token_count,
-                output_tokens: usage.candidates_token_count,
-            },
-            None => Usage {
-                input_tokens: 0,
-                output_tokens: 0,
-            },
-        };
-
-        // Check if the response contains a function call
-        let has_function_call = content_parts
-            .iter()
-            .any(|part| matches!(part, MessageContent::ToolUse { .. }));
-
-        // Set stop reason to ToolUse if function call is present
-        let stop_reason = if has_function_call {
-            StopReason::ToolUse
-        } else {
-            candidate.finish_reason.into()
-        };
-
-        Ok(CompletionResponse {
-            content: content_parts,
-            id: candidate.index.to_string(),
-            model: response.model_version,
-            role: candidate.content.role.into(),
-            stop_reason,
-            stop_sequence: None,
-            message_type: "gemini".to_string(),
-            usage,
-        })
     }
 }
 
@@ -736,13 +746,13 @@ impl ModelInfo {
     pub fn get_default_models() -> Vec<ModelInfo> {
         vec![
             ModelInfo {
-                id: "gemini-2.0-flash".to_string(),
-                display_name: "Gemini 2.0 Flash".to_string(),
+                id: "gemini-2.5-flash-preview-04-17".to_string(),
+                display_name: "Gemini 2.5 Flash".to_string(),
                 description: Some(
                     "Optimized for speed, versatile on a broad range of tasks".to_string(),
                 ),
-                input_token_limit: 32_000,
-                output_token_limit: 8_000,
+                input_token_limit: 1048576,
+                output_token_limit: 65536,
                 supported_generation_methods: vec![
                     "generateContent".to_string(),
                     "streamGenerateContent".to_string(),

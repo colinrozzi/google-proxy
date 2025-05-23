@@ -1,7 +1,12 @@
 name = "google-proxy"
-component_path = "/nix/store/k69r1vdg80g7i151aqan0qky3gp8fgw7-google-proxy-0.1.0/lib/google-proxy.wasm"
-short_description = "A proxy actor for interacting with the Google Gemini API"
+version = "0.1.0"
+component_path = "/Users/colinrozzi/work/actor-registry/google-proxy/./target/wasm32-unknown-unknown/release/google_proxy.wasm"
 init_state = "/Users/colinrozzi/work/actor-registry/google-proxy/init.json"
+
+[[handlers]]
+type = "message-server"
+
+[handlers.config]
 
 [[handlers]]
 type = "runtime"
