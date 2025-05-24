@@ -91,7 +91,7 @@ runs:
       shell: bash
       run: |
         # Check if manifest references initial_state
-        if grep -q "initial_state" manifest.toml; then
+        if grep -q "init_state" manifest.toml; then
           echo "HAS_INITIAL_STATE=true" >> $GITHUB_OUTPUT
           echo "Manifest includes initial_state reference"
         else
