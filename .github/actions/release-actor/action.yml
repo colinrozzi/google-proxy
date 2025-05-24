@@ -134,5 +134,5 @@ runs:
         
         # Update initial_state URL if present
         if [ "${{ steps.check-state.outputs.HAS_INITIAL_STATE }}" = "true" ]; then
-          sed -i "s|initial_state = \".*\"|initial_state = \"https://github.com/${{ github.repository }}/releases/download/$VERSION/${{ steps.actor-info.outputs.ACTOR_NAME }}-init.json\"|" ${{ steps.actor-info.outputs.ACTOR_NAME }}-manifest.toml
+          sed -i "s|init_state = \".*\"|init_state = \"https://github.com/${{ github.repository }}/releases/download/$VERSION/${{ steps.actor-info.outputs.ACTOR_NAME }}-init.json\"|" ${{ steps.actor-info.outputs.ACTOR_NAME }}-manifest.toml
         fi
