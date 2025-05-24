@@ -26,9 +26,9 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            *-component.wasm
-            *-manifest.toml
-            *-init.json
+            component.wasm
+            manifest.toml
+            init.json
           body: |
             ## Actor Release ${{ steps.version.outputs.VERSION }}
             
@@ -37,7 +37,7 @@ jobs:
             ### Usage
             Reference the actor by its manifest URL (the file name will match the actor name):
             ```
-            https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.VERSION }}/{{ steps.actor-info.outputs.ACTOR_NAME }}-manifest.toml
+            https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.VERSION }}/manifest.toml
             ```
           draft: false
           prerelease: false
