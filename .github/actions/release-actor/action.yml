@@ -114,25 +114,13 @@ runs:
         VERSION=${GITHUB_REF#refs/tags/}
         
         # Prepare core assets
-        cp target/${{ inputs.wasm-target }}/release/$BINARY_NAME.wasm ${{ steps.actor-info.outputs.ACTOR_NAME }}-component.wasm
-        cp manifest.toml ${{ steps.actor-info.outputs.ACTOR_NAME }}-manifest.toml
-        
-        # Handle initial state if referenced in manifest
-        if [ "${{ steps.check-state.outputs.HAS_INITIAL_STATE }}" = "true" ]; then
-          if [ -f "init.json" ]; then
-            cp init.json ${{ steps.actor-info.outputs.ACTOR_NAME }}-init.json
-            echo "Copied initial state file"
-          else
-            echo "Warning: Manifest references initial_state but init.json not found"
-            exit 1
-          fi
-        fi
+        cp target/${{ inputs.wasm-target }}/release/$BINARY_NAME.wasm component.wasm
         
         # Update manifest URLs
-        sed -i "s|component = \".*\"|component = \"https://github.com/${{ github.repository }}/releases/download/$VERSION/${{ steps.actor-info.outputs.ACTOR_NAME }}-component.wasm\"|" ${{ steps.actor-info.outputs.ACTOR_NAME }}-manifest.toml
-        sed -i "s|version = \".*\"|version = \"$VERSION\"|" ${{ steps.actor-info.outputs.ACTOR_NAME }}-manifest.toml
+        sed -i "s|component = \".*\"|component = \"https://github.com/${{ github.repository }}/releases/download/$VERSION/component.wasm\"|" manifest.toml
+        sed -i "s|version = \".*\"|version = \"$VERSION\"|" manifest.toml
         
         # Update initial_state URL if present
         if [ "${{ steps.check-state.outputs.HAS_INITIAL_STATE }}" = "true" ]; then
-          sed -i "s|init_state = \".*\"|init_state = \"https://github.com/${{ github.repository }}/releases/download/$VERSION/${{ steps.actor-info.outputs.ACTOR_NAME }}-init.json\"|" ${{ steps.actor-info.outputs.ACTOR_NAME }}-manifest.toml
+          sed -i "s|init_state = \".*\"|init_state = \"https://github.com/${{ github.repository }}/releases/download/$VERSION/init.json\"|" manifest.toml
         fi
