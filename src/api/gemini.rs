@@ -4,7 +4,7 @@ use crate::types::gemini::{
     GeminiError, GenerateContentRequest, GenerateContentResponse, ModelInfo,
 };
 
-use serde_json::json;
+
 
 /// Client for interacting with the Google Gemini API
 pub struct GeminiClient {
@@ -14,8 +14,7 @@ pub struct GeminiClient {
     /// Base URL for the API
     base_url: String,
 
-    /// API version to use
-    api_version: String,
+
 }
 
 impl GeminiClient {
@@ -24,7 +23,6 @@ impl GeminiClient {
         Self {
             api_key,
             base_url: "https://generativelanguage.googleapis.com/v1beta".to_string(),
-            api_version: "v1beta".to_string(),
         }
     }
 

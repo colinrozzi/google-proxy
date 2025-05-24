@@ -241,7 +241,7 @@ impl TryFrom<Part> for MessageContent {
                     input: args,
                 })
             }
-            PartData::FunctionResponse(FunctionResponse { id, name, response }) => {
+            PartData::FunctionResponse(FunctionResponse { id, name: _, response }) => {
                 Ok(MessageContent::ToolResult {
                     tool_use_id: id.unwrap_or_default(),
                     content: vec![mcp_protocol::tool::ToolContent::Text {
