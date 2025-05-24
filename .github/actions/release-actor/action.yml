@@ -86,6 +86,19 @@ runs:
       run: |
         cargo component build --release --target ${{ inputs.wasm-target }}
         
+    - name: Check for initial state in manifest
+      id: check-state
+      shell: bash
+      run: |
+        # Check if manifest references initial_state
+        if grep -q "initial_state" manifest.toml; then
+          echo "HAS_INITIAL_STATE=true" >> $GITHUB_OUTPUT
+          echo "Manifest includes initial_state reference"
+        else
+          echo "HAS_INITIAL_STATE=false" >> $GITHUB_OUTPUT
+          echo "No initial_state found in manifest"
+        fi
+        
     - name: Prepare release assets
       shell: bash
       run: |
@@ -100,10 +113,26 @@ runs:
         # Extract version from tag
         VERSION=${GITHUB_REF#refs/tags/}
         
-        # Prepare assets
+        # Prepare core assets
         cp target/${{ inputs.wasm-target }}/release/$BINARY_NAME.wasm ${{ steps.actor-info.outputs.ACTOR_NAME }}-component.wasm
         cp manifest.toml ${{ steps.actor-info.outputs.ACTOR_NAME }}-manifest.toml
         
-        # Update manifest
+        # Handle initial state if referenced in manifest
+        if [ "${{ steps.check-state.outputs.HAS_INITIAL_STATE }}" = "true" ]; then
+          if [ -f "init.json" ]; then
+            cp init.json ${{ steps.actor-info.outputs.ACTOR_NAME }}-init.json
+            echo "Copied initial state file"
+          else
+            echo "Warning: Manifest references initial_state but init.json not found"
+            exit 1
+          fi
+        fi
+        
+        # Update manifest URLs
         sed -i "s|component = \".*\"|component = \"https://github.com/${{ github.repository }}/releases/download/$VERSION/${{ steps.actor-info.outputs.ACTOR_NAME }}-component.wasm\"|" ${{ steps.actor-info.outputs.ACTOR_NAME }}-manifest.toml
         sed -i "s|version = \".*\"|version = \"$VERSION\"|" ${{ steps.actor-info.outputs.ACTOR_NAME }}-manifest.toml
+        
+        # Update initial_state URL if present
+        if [ "${{ steps.check-state.outputs.HAS_INITIAL_STATE }}" = "true" ]; then
+          sed -i "s|initial_state = \".*\"|initial_state = \"https://github.com/${{ github.repository }}/releases/download/$VERSION/${{ steps.actor-info.outputs.ACTOR_NAME }}-init.json\"|" ${{ steps.actor-info.outputs.ACTOR_NAME }}-manifest.toml
+        fi

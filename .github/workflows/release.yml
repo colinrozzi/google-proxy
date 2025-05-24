@@ -28,6 +28,7 @@ jobs:
           files: |
             *-component.wasm
             *-manifest.toml
+            *-init.json
           body: |
             ## Actor Release ${{ steps.version.outputs.VERSION }}
             
