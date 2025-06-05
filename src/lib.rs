@@ -6,13 +6,13 @@ pub mod types;
 #[cfg(test)]
 mod tests;
 
-use crate::bindings::exports::ntwk::theater::actor::Guest;
-use crate::bindings::exports::ntwk::theater::message_server_client::Guest as MessageServerClient;
-use crate::bindings::ntwk::theater::runtime::log;
+use crate::bindings::exports::theater::simple::actor::Guest;
+use crate::bindings::exports::theater::simple::message_server_client::Guest as MessageServerClient;
+use crate::bindings::theater::simple::runtime::log;
 use crate::types::state::{Config, State};
 
-use bindings::ntwk::theater::environment;
-use bindings::ntwk::theater::types::ChannelAccept;
+use bindings::theater::simple::environment;
+use bindings::theater::simple::types::ChannelAccept;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
