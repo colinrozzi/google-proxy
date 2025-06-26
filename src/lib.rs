@@ -44,7 +44,7 @@ impl Guest for Component {
 
         log("Init data parsed successfully");
 
-        let google_api_key = match environment::get_var("GOOGLE_GEMINI_API_KEY") {
+        let google_api_key = match environment::get_var("GEMINI_API_KEY") {
             Some(key) => {
                 log("Google API key found in environment");
                 key
