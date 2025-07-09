@@ -1,4 +1,4 @@
-use crate::api::GeminiClient;
+use crate::api::{GeminiClient, RetryConfig};
 use crate::bindings::theater::simple::runtime::log;
 use crate::types::state::State;
 use genai_types::{ProxyRequest, ProxyResponse};
@@ -42,8 +42,16 @@ pub fn handle_request(
         }
     };
 
-    // Create Gemini client
-    let client = GeminiClient::new(state.api_key.clone());
+    // Convert state retry config to API retry config
+    let retry_config = RetryConfig {
+        max_retries: state.config.retry_config.max_retries,
+        base_delay_ms: state.config.retry_config.base_delay_ms,
+        max_delay_ms: state.config.retry_config.max_delay_ms,
+        backoff_multiplier: state.config.retry_config.backoff_multiplier,
+    };
+
+    // Create Gemini client with retry configuration
+    let client = GeminiClient::new_with_retry_config(state.api_key.clone(), retry_config);
 
     // Process based on operation type
     let response = match request {
