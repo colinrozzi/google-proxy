@@ -1,5 +1,29 @@
 use serde::{Deserialize, Serialize};
 
+/// Configuration for retry logic
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct RetryConfig {
+    /// Maximum number of retry attempts
+    pub max_retries: u32,
+    /// Base delay in milliseconds for exponential backoff
+    pub base_delay_ms: u32,
+    /// Maximum delay in milliseconds to cap exponential backoff
+    pub max_delay_ms: u32,
+    /// Multiplier for exponential backoff
+    pub backoff_multiplier: f32,
+}
+
+impl Default for RetryConfig {
+    fn default() -> Self {
+        Self {
+            max_retries: 3,
+            base_delay_ms: 1000,  // Start with 1 second
+            max_delay_ms: 30000,  // Cap at 30 seconds
+            backoff_multiplier: 2.0,
+        }
+    }
+}
+
 /// Configuration options for the Google Gemini API proxy
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Config {
@@ -11,6 +35,9 @@ pub struct Config {
     
     /// Request timeout in milliseconds
     pub timeout_ms: u32,
+
+    /// Retry configuration for handling API errors
+    pub retry_config: RetryConfig,
 }
 
 impl Default for Config {
@@ -19,6 +46,7 @@ impl Default for Config {
             default_model: "gemini-2.0-flash".to_string(),
             max_cache_size: Some(100),
             timeout_ms: 30000,  // 30 seconds
+            retry_config: RetryConfig::default(),
         }
     }
 }
