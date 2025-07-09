@@ -9,7 +9,7 @@ mod tests;
 use crate::bindings::exports::theater::simple::actor::Guest;
 use crate::bindings::exports::theater::simple::message_server_client::Guest as MessageServerClient;
 use crate::bindings::theater::simple::runtime::log;
-use crate::types::state::{Config, State};
+use crate::types::state::{InitConfig, State};
 
 use bindings::theater::simple::environment;
 use bindings::theater::simple::types::ChannelAccept;
@@ -18,7 +18,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize, Debug)]
 struct InitData {
     store_id: Option<String>,
-    config: Option<Config>,
+    config: Option<InitConfig>,
 }
 
 struct Component;

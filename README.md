@@ -21,11 +21,10 @@ The actor implements a simple request-response message interface that supports:
 
 ## Configuration
 
-The actor accepts these configuration parameters during initialization:
+The actor accepts these configuration parameters during initialization. All configuration fields are optional and will use sensible defaults if not provided:
 
 ```json
 {
-  "google_api_key": "YOUR_GEMINI_API_KEY",
   "store_id": "optional-store-id",
   "config": {
     "default_model": "gemini-2.0-flash",
@@ -40,6 +39,24 @@ The actor accepts these configuration parameters during initialization:
   }
 }
 ```
+
+**Minimal Configuration Example:**
+```json
+{
+  "store_id": null,
+  "config": {
+    "default_model": "gemini-2.0-flash"
+  }
+}
+```
+
+**Default Values:**
+- `default_model`: "gemini-2.0-flash"
+- `max_cache_size`: 100
+- `timeout_ms`: 30000 (30 seconds)
+- `retry_config`: Uses default retry configuration (see below)
+
+Note: The `GEMINI_API_KEY` environment variable is required and must be set in the actor's environment.
 
 ### Retry Configuration
 

@@ -1,9 +1,47 @@
 use std::convert::TryFrom;
 
 use crate::types::gemini::GenerateContentResponse;
-use crate::types::state::{Config, RetryConfig};
+use crate::types::state::{Config, RetryConfig, InitConfig, State};
 use genai_types::messages::StopReason;
 use genai_types::MessageContent;
+
+#[test]
+fn test_minimal_init_config() {
+    let init_config = InitConfig {
+        default_model: Some("gemini-2.0-flash".to_string()),
+        max_cache_size: None,
+        timeout_ms: None,
+        retry_config: None,
+    };
+
+    let state = State::new(
+        "test-id".to_string(),
+        "test-api-key".to_string(),
+        None,
+        Some(init_config),
+    );
+
+    assert_eq!(state.config.default_model, "gemini-2.0-flash");
+    assert_eq!(state.config.max_cache_size, Some(100)); // default
+    assert_eq!(state.config.timeout_ms, 30000); // default
+    assert_eq!(state.config.retry_config.max_retries, 3); // default
+    assert_eq!(state.config.retry_config.base_delay_ms, 1000); // default
+}
+
+#[test]
+fn test_empty_init_config() {
+    let state = State::new(
+        "test-id".to_string(),
+        "test-api-key".to_string(),
+        None,
+        None,
+    );
+
+    assert_eq!(state.config.default_model, "gemini-2.0-flash");
+    assert_eq!(state.config.max_cache_size, Some(100));
+    assert_eq!(state.config.timeout_ms, 30000);
+    assert_eq!(state.config.retry_config.max_retries, 3);
+}
 
 #[test]
 fn gemini_function_call_pipeline() {
