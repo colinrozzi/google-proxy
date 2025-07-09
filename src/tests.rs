@@ -1,6 +1,7 @@
 use std::convert::TryFrom;
 
 use crate::types::gemini::GenerateContentResponse;
+use crate::types::state::{Config, RetryConfig};
 use genai_types::messages::StopReason;
 use genai_types::MessageContent;
 
@@ -108,4 +109,66 @@ fn gemini_text_pipeline() {
         }
         other => panic!("unexpected first content part: {:?}", other),
     }
+}
+
+#[test]
+fn test_retry_config_defaults() {
+    let config = RetryConfig::default();
+    assert_eq!(config.max_retries, 3);
+    assert_eq!(config.base_delay_ms, 1000);
+    assert_eq!(config.max_delay_ms, 30000);
+    assert_eq!(config.backoff_multiplier, 2.0);
+}
+
+#[test]
+fn test_config_with_retry_defaults() {
+    let config = Config::default();
+    assert_eq!(config.retry_config.max_retries, 3);
+    assert_eq!(config.retry_config.base_delay_ms, 1000);
+    assert_eq!(config.retry_config.max_delay_ms, 30000);
+    assert_eq!(config.retry_config.backoff_multiplier, 2.0);
+}
+
+#[test]
+fn test_retry_config_serialization() {
+    let config = RetryConfig {
+        max_retries: 5,
+        base_delay_ms: 2000,
+        max_delay_ms: 60000,
+        backoff_multiplier: 1.5,
+    };
+    
+    let json = serde_json::to_string(&config).expect("should serialize");
+    let deserialized: RetryConfig = serde_json::from_str(&json).expect("should deserialize");
+    
+    assert_eq!(deserialized.max_retries, 5);
+    assert_eq!(deserialized.base_delay_ms, 2000);
+    assert_eq!(deserialized.max_delay_ms, 60000);
+    assert_eq!(deserialized.backoff_multiplier, 1.5);
+}
+
+#[test]
+fn test_config_with_custom_retry_serialization() {
+    let config = Config {
+        default_model: "gemini-2.0-pro".to_string(),
+        max_cache_size: Some(50),
+        timeout_ms: 15000,
+        retry_config: RetryConfig {
+            max_retries: 2,
+            base_delay_ms: 500,
+            max_delay_ms: 10000,
+            backoff_multiplier: 3.0,
+        },
+    };
+    
+    let json = serde_json::to_string(&config).expect("should serialize");
+    let deserialized: Config = serde_json::from_str(&json).expect("should deserialize");
+    
+    assert_eq!(deserialized.default_model, "gemini-2.0-pro");
+    assert_eq!(deserialized.max_cache_size, Some(50));
+    assert_eq!(deserialized.timeout_ms, 15000);
+    assert_eq!(deserialized.retry_config.max_retries, 2);
+    assert_eq!(deserialized.retry_config.base_delay_ms, 500);
+    assert_eq!(deserialized.retry_config.max_delay_ms, 10000);
+    assert_eq!(deserialized.retry_config.backoff_multiplier, 3.0);
 }
