@@ -8,6 +8,7 @@ A WebAssembly component actor that serves as a proxy for the Google Gemini API, 
 - **Message Interface**: Simple request-response messaging system
 - **Model Information**: Includes details about available Gemini models
 - **Error Handling**: Robust error reporting and handling
+- **Retry Logic**: Automatic retry with exponential backoff for transient API errors
 
 ## Usage
 
@@ -29,10 +30,37 @@ The actor accepts these configuration parameters during initialization:
   "config": {
     "default_model": "gemini-2.0-flash",
     "max_cache_size": 100,
-    "timeout_ms": 30000
+    "timeout_ms": 30000,
+    "retry_config": {
+      "max_retries": 3,
+      "base_delay_ms": 1000,
+      "max_delay_ms": 30000,
+      "backoff_multiplier": 2.0
+    }
   }
 }
 ```
+
+### Retry Configuration
+
+The retry system automatically handles transient API errors, particularly useful for:
+
+- **503 Service Unavailable**: When the model is overloaded
+- **429 Too Many Requests**: When rate limits are exceeded
+- **500/502/504 Server Errors**: Temporary server issues
+
+**Configuration Options:**
+
+- `max_retries`: Maximum number of retry attempts (default: 3)
+- `base_delay_ms`: Initial delay in milliseconds (default: 1000)
+- `max_delay_ms`: Maximum delay cap in milliseconds (default: 30000)
+- `backoff_multiplier`: Exponential backoff multiplier (default: 2.0)
+
+**Example Retry Behavior:**
+- Attempt 1: Fails with 503 → Wait 1 second
+- Attempt 2: Fails with 503 → Wait 2 seconds  
+- Attempt 3: Fails with 503 → Wait 4 seconds
+- Attempt 4: Fails with 503 → Give up and return error
 
 ## Building
 
